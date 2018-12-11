@@ -21,7 +21,7 @@ namespace FreedesktopSecretService.DBusInterfaces
             {
                 if (!await InitializeDBusAsync())
                 {
-                    Console.WriteLine("I want to unload this plugin but ont know how");
+                    Console.WriteLine("I want to unload this plugin but don't know how");
                 }
             });
         }
@@ -33,13 +33,20 @@ namespace FreedesktopSecretService.DBusInterfaces
 
             if (await _sessionConnection.IsServiceActiveAsync(NAME))
             {
-                Console.WriteLine(String.Format("Service name {0} already taken on DBus", NAME));
+                Console.WriteLine($"Service name {NAME} already taken on DBus");
                 return false;
             }
-            
-            await _sessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
-            await _sessionConnection.RegisterObjectAsync(new SecretService());
-            Console.WriteLine(await _sessionConnection.IsServiceActiveAsync(NAME));
+
+            try
+            {
+                await _sessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
+                await _sessionConnection.RegisterObjectAsync(new SecretService());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
 
             return true;
         }
