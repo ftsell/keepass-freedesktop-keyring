@@ -1,22 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FreedesktopSecretService.DBusInterfaces;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService
+namespace FreedesktopSecretService.DBusInterfaces
 {
+    [DBusInterface("org.freedesktop.Secret.Collection")]
     public interface ICollection : IDBusObject
     {
 
         //
         // Methods
         //
-        Task<ObjectPath> Delete();
+        Task<ObjectPath> DeleteAsync();
 
-        Task<ObjectPath[]> SearchItems(IDictionary<string, string> attributes);
+        Task<ObjectPath[]> SearchItemsAsync(IDictionary<string, string> attributes);
 
-        Task<(ObjectPath item, ObjectPath prompt)> CreateItem(IDictionary<string, object> properties, Secret secret, bool replace);
+        Task<(ObjectPath item, ObjectPath prompt)> CreateItemAsync(IDictionary<string, object> properties, Secret secret, bool replace);
         
         //
         // Signals

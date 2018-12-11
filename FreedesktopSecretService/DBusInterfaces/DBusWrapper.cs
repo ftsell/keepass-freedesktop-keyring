@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using KeePassLib;
 using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusInterfaces
@@ -49,6 +50,24 @@ namespace FreedesktopSecretService.DBusInterfaces
             }
 
             return true;
+        }
+
+        internal async Task RegisterDatabase(PwDatabase db)
+        {
+            try
+            {
+                await _sessionConnection.RegisterObjectAsync(new Collection(db));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        internal async Task UnRegisterDatabase(PwDatabase db)
+        {
+            
         }
         
     }

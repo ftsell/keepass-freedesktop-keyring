@@ -11,38 +11,46 @@ namespace FreedesktopSecretService.DBusInterfaces
 
         public ObjectPath ObjectPath { get; } = new ObjectPath("/org/freedesktop/secrets");
         
-        private List<ObjectPath> Collections { get; set; } = new List<ObjectPath>();
+        private List<ObjectPath> Collections { get; } = new List<ObjectPath>();
 
         //
         // Methods
         //
 
-        public Task<(string output, object result)> OpenSessionAsync(string algorithm, object input)
+        public async Task<(string output, object result)> OpenSessionAsync(string algorithm, object input)
+        {
+            if (algorithm == "plain")
+            {
+                return (null, new ObjectPath("/"));
+            }
+
+            else
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public async Task<(ObjectPath collection, ObjectPath prompt)> CreateCollectionAsync(IDictionary<string, object> properties, string alias)
         {
             throw new NotImplementedException();
         }
 
-        public Task<(ObjectPath collection, ObjectPath prompt)> CreateCollectionAsync(IDictionary<string, object> properties, string alias)
+        public async Task<(ObjectPath[] unlocked, ObjectPath[] locked)> SearchItemAsync(IDictionary<string, string> attributes)
         {
             throw new NotImplementedException();
         }
 
-        public Task<(ObjectPath[] unlocked, ObjectPath[] locked)> SearchItemAsync(IDictionary<string, string> attributes)
+        public async Task<(ObjectPath[] unlocked, ObjectPath prompt)> UnlockAsync(ObjectPath[] objects)
         {
             throw new NotImplementedException();
         }
 
-        public Task<(ObjectPath[] unlocked, ObjectPath prompt)> UnlockAsync(ObjectPath[] objects)
+        public async Task<(ObjectPath[] locked, ObjectPath prompt)> LockAsync(ObjectPath[] objects)
         {
             throw new NotImplementedException();
         }
 
-        public Task<(ObjectPath[] locked, ObjectPath prompt)> LockAsync(ObjectPath[] objects)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IDictionary<ObjectPath, string>> GetSecretsAsync(ObjectPath[] items, ObjectPath session)
+        public async Task<IDictionary<ObjectPath, string>> GetSecretsAsync(ObjectPath[] items, ObjectPath session)
         {
             throw new NotImplementedException();
         }
@@ -57,7 +65,7 @@ namespace FreedesktopSecretService.DBusInterfaces
             throw new NotImplementedException();
         }
 
-        class TestDisposable : IDisposable
+        public class TestDisposable : IDisposable
         {
             public void Dispose()
             {

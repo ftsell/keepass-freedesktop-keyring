@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using FreedesktopSecretService.DBusInterfaces;
+using KeePass.Ecas;
+using KeePass.Forms;
 using KeePass.Plugins;
 using Tmds.DBus;
 
@@ -17,6 +19,9 @@ namespace FreedesktopSecretService
 
             _host = host;
             _dbus = new DBusWrapper(this);
+
+            // Register event listeners on KeePass Events
+            _host.MainWindow.FileOpened += (sender, e) => { Task.Run(() => _dbus.RegisterDatabase(e.Database)); };
             
             return true;
         }
