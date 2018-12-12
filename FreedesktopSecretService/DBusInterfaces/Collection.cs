@@ -31,8 +31,12 @@ namespace FreedesktopSecretService.DBusInterfaces
 
         private void RegisterDatabaseItems()
         {
+            var i = 0;    // TODO Remove this restriction
             foreach (PwEntry entry in _db.RootGroup.GetEntries(true))
             {
+                i++;
+                if (i>10)
+                    break;
                 var item = new Item(_dbus, this, entry);
                 _dbus.SessionConnection.RegisterObjectAsync(item);
                 _Items[entry] = item;

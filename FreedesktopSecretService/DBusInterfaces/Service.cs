@@ -16,6 +16,8 @@ namespace FreedesktopSecretService.DBusInterfaces
         private List<ObjectPath> Collections { get; } = new List<ObjectPath>();
         
         private IDictionary<PwDatabase, Collection> _collections = new Dictionary<PwDatabase, Collection>();
+        
+        private IDictionary<ObjectPath, Session> _sessions = new Dictionary<ObjectPath, Session>();
 
         private DBusWrapper _dbus;
 
@@ -64,11 +66,17 @@ namespace FreedesktopSecretService.DBusInterfaces
         // Methods
         //
 
-        public async Task<(string output, object result)> OpenSessionAsync(string algorithm, object input)
+        public async Task<(object output, ObjectPath result)> OpenSessionAsync(string algorithm, object input)
         {
             if (algorithm == "plain")
             {
-                return (null, new ObjectPath("/"));
+                var session = new Session();
+                await _dbus.SessionConnection.RegisterObjectAsync(session);
+                _sessions[session.ObjectPath] = session;
+                
+                Console.WriteLine($"Opened new {algorithm} Session under {session.ObjectPath}");
+                
+                return ("", session.ObjectPath);
             }
 
             else

@@ -15,7 +15,7 @@ namespace FreedesktopSecretService.DBusInterfaces
         // Methods
         //
 
-        Task<(string output, object result)> OpenSessionAsync(string algorithm, object input);
+        Task<(object output, ObjectPath result)> OpenSessionAsync(string algorithm, object input);
 
         Task<(ObjectPath collection, ObjectPath prompt)> CreateCollectionAsync(IDictionary<string, object> properties,
             string alias);
