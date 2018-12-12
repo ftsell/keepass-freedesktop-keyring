@@ -13,13 +13,15 @@ namespace FreedesktopSecretService.DBusInterfaces
         private static readonly string NAME = "org.freedesktop.secrets";
 
         internal Connection SessionConnection;
-        private FreedesktopSecretServiceExt _plugin;
-
-        internal IDictionary<PwDatabase, Collection> Collections = new Dictionary<PwDatabase, Collection>();
+        internal SecretService _Service;
 
         public DBusWrapper(FreedesktopSecretServiceExt plugin)
         {
-            _plugin = plugin;
+            // Register event listeners on KeePass Events
+            plugin._Host.MainWindow.FileOpened += (sender, e) => Task.Run(() 
+                => _Service.RegisterDatabaseAsync(e.Database));
+            plugin._Host.MainWindow.FileClosingPre += (sender, e) => Task.Run(() 
+                => _Service.UnRegisterDatabaseAsync(e.Database));
             
             Task.Run(async () =>
             {
@@ -43,8 +45,9 @@ namespace FreedesktopSecretService.DBusInterfaces
 
             try
             {
+                _Service = new SecretService(this);
                 await SessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
-                await SessionConnection.RegisterObjectAsync(new SecretService());
+                await SessionConnection.RegisterObjectAsync(_Service);
             }
             catch (Exception e)
             {
@@ -53,42 +56,6 @@ namespace FreedesktopSecretService.DBusInterfaces
             }
 
             return true;
-        }
-
-        internal async Task RegisterDatabaseAsync(PwDatabase db)
-        {
-            try
-            {
-                var coll = new Collection(db, this);
-                await SessionConnection.RegisterObjectAsync(coll);
-                Collections[db] = coll;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-        }
-
-        internal async Task UnRegisterDatabaseAsync(PwDatabase db)
-        {
-            try
-            {
-
-                if (Collections.ContainsKey(db))
-                {
-                    Collections[db].Dispose();
-                    SessionConnection.UnregisterObject(Collections[db]);
-                }
-                    
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-            
         }
         
     }

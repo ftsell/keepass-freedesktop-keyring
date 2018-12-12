@@ -13,7 +13,7 @@ namespace FreedesktopSecretService.DBusInterfaces
         private PwDatabase _db;
         private DBusWrapper _dbus;
 
-        internal IDictionary<PwEntry, Item> Items = new Dictionary<PwEntry, Item>();
+        internal IDictionary<PwEntry, Item> _Items = new Dictionary<PwEntry, Item>();
 
         public Collection(PwDatabase db, DBusWrapper dbus)
         {
@@ -35,7 +35,7 @@ namespace FreedesktopSecretService.DBusInterfaces
             {
                 var item = new Item(_dbus, this, entry);
                 _dbus.SessionConnection.RegisterObjectAsync(item);
-                Items[entry] = item;
+                _Items[entry] = item;
             }
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KeePassLib;
 using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusInterfaces
@@ -11,7 +12,53 @@ namespace FreedesktopSecretService.DBusInterfaces
 
         public ObjectPath ObjectPath { get; } = new ObjectPath("/org/freedesktop/secrets");
         
+        // property
         private List<ObjectPath> Collections { get; } = new List<ObjectPath>();
+        
+        private IDictionary<PwDatabase, Collection> _collections = new Dictionary<PwDatabase, Collection>();
+
+        private DBusWrapper _dbus;
+
+        public SecretService(DBusWrapper dbus)
+        {
+            _dbus = dbus;
+        }
+        
+        internal async Task RegisterDatabaseAsync(PwDatabase db)
+        {
+            try
+            {
+                var coll = new Collection(db, _dbus);
+                await _dbus.SessionConnection.RegisterObjectAsync(coll);
+                _collections[db] = coll;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+
+        internal async Task UnRegisterDatabaseAsync(PwDatabase db)
+        {
+            try
+            {
+
+                if (_collections.ContainsKey(db))
+                {
+                    _collections[db].Dispose();
+                    _dbus.SessionConnection.UnregisterObject(_collections[db]);
+                }
+                    
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+            
+        }
 
         //
         // Methods
@@ -121,7 +168,6 @@ namespace FreedesktopSecretService.DBusInterfaces
 
         public async Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler)
         {
-            Console.WriteLine("watched");
             return new TestDisposable();
         }
     }
