@@ -17,7 +17,7 @@ namespace FreedesktopSecretService.DBusInterfaces
         
         private IDictionary<PwDatabase, Collection> _collections = new Dictionary<PwDatabase, Collection>();
         
-        private IDictionary<ObjectPath, Session> _sessions = new Dictionary<ObjectPath, Session>();
+        internal IDictionary<ObjectPath, Session> _Sessions = new Dictionary<ObjectPath, Session>();
 
         private DBusWrapper _dbus;
 
@@ -72,7 +72,7 @@ namespace FreedesktopSecretService.DBusInterfaces
             {
                 var session = new Session();
                 await _dbus.SessionConnection.RegisterObjectAsync(session);
-                _sessions[session.ObjectPath] = session;
+                _Sessions[session.ObjectPath] = session;
                 
                 Console.WriteLine($"Opened new {algorithm} Session under {session.ObjectPath}");
                 

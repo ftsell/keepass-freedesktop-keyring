@@ -9,8 +9,15 @@ namespace FreedesktopSecretService.DBusInterfaces
     {
         public ObjectPath ObjectPath { get; }
 
+        private PwEntry _entry;
+
+        private DBusWrapper _dbus;
+
         public Item(DBusWrapper dbus, Collection collection, PwEntry entry)
         {
+            _entry = entry;
+            _dbus = dbus;
+            
             ObjectPath = new ObjectPath(collection.ObjectPath + $"/{entry.Uuid.ToHexString()}");
         }
         
@@ -23,9 +30,18 @@ namespace FreedesktopSecretService.DBusInterfaces
             throw new System.NotImplementedException();
         }
 
-        public Task<Secret> GetSecretAsync(ObjectPath session)
+        public async Task<Secret> GetSecretAsync(ObjectPath session)
         {
-            throw new System.NotImplementedException();
+            // Since we only support plain-text transfer of secret it is enough to know that the specified session exists
+            if (_dbus._Service._Sessions.ContainsKey(session) || true)
+            {
+                var title = _entry.Strings.Get("Title");
+                var password = _entry.Strings.Get("Password");
+                
+                return new Secret(session, password.ReadString());
+            }
+
+            throw new UnauthorizedAccessException();
         }
 
         public Task SetSecretAsync(Secret secret)
