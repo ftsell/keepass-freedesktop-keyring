@@ -21,7 +21,8 @@ namespace FreedesktopSecretService
             _dbus = new DBusWrapper(this);
 
             // Register event listeners on KeePass Events
-            _host.MainWindow.FileOpened += (sender, e) => { Task.Run(() => _dbus.RegisterDatabase(e.Database)); };
+            _host.MainWindow.FileOpened += (sender, e) => Task.Run(() => _dbus.RegisterDatabaseAsync(e.Database));
+            _host.MainWindow.FileClosingPre += (sender, e) => Task.Run(() => _dbus.UnRegisterDatabaseAsync(e.Database));
             
             return true;
         }

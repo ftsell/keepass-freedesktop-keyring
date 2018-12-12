@@ -7,13 +7,41 @@ using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusInterfaces
 {
-    public class Collection : ICollection
+    public class Collection : ICollection, IDisposable
     {
         public ObjectPath ObjectPath { get; }
+        private PwDatabase _db;
+        private DBusWrapper _dbus;
 
-        public Collection(PwDatabase db)
+        internal IDictionary<PwEntry, Item> Items = new Dictionary<PwEntry, Item>();
+
+        public Collection(PwDatabase db, DBusWrapper dbus)
         {
+            _db = db;
+            _dbus = dbus;
             ObjectPath = new ObjectPath($"/org/freedesktop/secrets/collection/{db.Name.MD5Hash()}");
+            
+            RegisterDatabaseItems();
+        }
+        
+        public void Dispose()
+        {
+            UnRegisterDatabaseItems();
+        }
+
+        private void RegisterDatabaseItems()
+        {
+            foreach (PwEntry entry in _db.RootGroup.GetEntries(true))
+            {
+                var item = new Item(_dbus, this, entry);
+                _dbus.SessionConnection.RegisterObjectAsync(item);
+                Items[entry] = item;
+            }
+        }
+
+        private void UnRegisterDatabaseItems()
+        {
+            
         }
 
         //

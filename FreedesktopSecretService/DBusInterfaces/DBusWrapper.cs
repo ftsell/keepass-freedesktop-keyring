@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using KeePassLib;
 using Tmds.DBus;
@@ -11,8 +12,10 @@ namespace FreedesktopSecretService.DBusInterfaces
         //    The different interfaces will be available under this name
         private static readonly string NAME = "org.freedesktop.secrets";
 
-        private Connection _sessionConnection;
+        internal Connection SessionConnection;
         private FreedesktopSecretServiceExt _plugin;
+
+        internal IDictionary<PwDatabase, Collection> Collections = new Dictionary<PwDatabase, Collection>();
 
         public DBusWrapper(FreedesktopSecretServiceExt plugin)
         {
@@ -29,10 +32,10 @@ namespace FreedesktopSecretService.DBusInterfaces
         
         private async Task<bool> InitializeDBusAsync()
         {
-            _sessionConnection = new Connection(Address.Session);
-            await _sessionConnection.ConnectAsync();
+            SessionConnection = new Connection(Address.Session);
+            await SessionConnection.ConnectAsync();
 
-            if (await _sessionConnection.IsServiceActiveAsync(NAME))
+            if (await SessionConnection.IsServiceActiveAsync(NAME))
             {
                 Console.WriteLine($"Service name {NAME} already taken on DBus");
                 return false;
@@ -40,8 +43,8 @@ namespace FreedesktopSecretService.DBusInterfaces
 
             try
             {
-                await _sessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
-                await _sessionConnection.RegisterObjectAsync(new SecretService());
+                await SessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
+                await SessionConnection.RegisterObjectAsync(new SecretService());
             }
             catch (Exception e)
             {
@@ -52,11 +55,13 @@ namespace FreedesktopSecretService.DBusInterfaces
             return true;
         }
 
-        internal async Task RegisterDatabase(PwDatabase db)
+        internal async Task RegisterDatabaseAsync(PwDatabase db)
         {
             try
             {
-                await _sessionConnection.RegisterObjectAsync(new Collection(db));
+                var coll = new Collection(db, this);
+                await SessionConnection.RegisterObjectAsync(coll);
+                Collections[db] = coll;
             }
             catch (Exception e)
             {
@@ -65,8 +70,24 @@ namespace FreedesktopSecretService.DBusInterfaces
             }
         }
 
-        internal async Task UnRegisterDatabase(PwDatabase db)
+        internal async Task UnRegisterDatabaseAsync(PwDatabase db)
         {
+            try
+            {
+
+                if (Collections.ContainsKey(db))
+                {
+                    Collections[db].Dispose();
+                    SessionConnection.UnregisterObject(Collections[db]);
+                }
+                    
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
             
         }
         

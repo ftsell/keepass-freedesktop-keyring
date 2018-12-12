@@ -1,12 +1,23 @@
+using System;
 using System.Threading.Tasks;
+using KeePassLib;
 using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusInterfaces
 {
     public class Item : IItem
     {
-        public ObjectPath ObjectPath { get; } = "";
+        public ObjectPath ObjectPath { get; }
+
+        public Item(DBusWrapper dbus, Collection collection, PwEntry entry)
+        {
+            ObjectPath = new ObjectPath(collection.ObjectPath + $"/{entry.Uuid.ToHexString()}");
+        }
         
+        //
+        // Methods
+        //
+
         public Task<ObjectPath> DeleteAsync()
         {
             throw new System.NotImplementedException();
