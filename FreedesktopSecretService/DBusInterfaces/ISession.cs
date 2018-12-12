@@ -1,7 +1,11 @@
-namespace FreedesktopSecretService
+using System.Threading.Tasks;
+using Tmds.DBus;
+
+namespace FreedesktopSecretService.DBusInterfaces
 {
-    public interface ISession
+    [DBusInterface("org.freedesktop.Secret.Session")]
+    public interface ISession : IDBusObject
     {
-        
+        Task CloseAsync();
     }
 }
