@@ -5,6 +5,9 @@ using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusInterfaces
 {
+    /// <summary>
+    /// <a href="https://specifications.freedesktop.org/secret-service/re02.html">Freedesktop specification</a>
+    /// </summary>
     [DBusInterface("org.freedesktop.Secret.Collection")]
     public interface ICollection : IDBusObject
     {
