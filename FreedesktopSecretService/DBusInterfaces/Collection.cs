@@ -29,17 +29,25 @@ namespace FreedesktopSecretService.DBusInterfaces
             UnRegisterDatabaseItems();
         }
 
-        private void RegisterDatabaseItems()
+        private async void RegisterDatabaseItems()
         {
-            var i = 0;    // TODO Remove this restriction
-            foreach (PwEntry entry in _db.RootGroup.GetEntries(true))
+            try
             {
-                i++;
-                if (i>10)
-                    break;
-                var item = new Item(_dbus, this, entry);
-                _dbus.SessionConnection.RegisterObjectAsync(item);
-                _Items[entry] = item;
+                var i = 0;    // TODO Remove this restriction
+                foreach (PwEntry entry in _db.RootGroup.GetEntries(true))
+                {
+                    i++;
+                    if (i>10)
+                        break;
+                    var item = new Item(_dbus, this, entry);
+                    await _dbus.SessionConnection.RegisterObjectAsync(item);
+                    _Items[entry] = item;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 

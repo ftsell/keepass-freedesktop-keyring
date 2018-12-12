@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
@@ -22,5 +24,27 @@ namespace FreedesktopSecretService.DBusInterfaces
         // 
         // Properties
         //
+        Task<object> GetAsync(string prop);
+        Task<ItemProperties> GetAllAsync();
+        Task SetAsync(string prop, object val);
+        Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler);
     }
+
+    [Dictionary]
+    public class ItemProperties
+    {
+        [Property(Access = PropertyAccess.Read)]
+        public bool Locked;
+
+        public IDictionary<string, string> Attributes;
+
+        public string Label;
+
+        [Property(Access = PropertyAccess.Read)]
+        public int Created;
+
+        [Property(Access = PropertyAccess.Read)]
+        public int Modified;
+    }
+    
 }
