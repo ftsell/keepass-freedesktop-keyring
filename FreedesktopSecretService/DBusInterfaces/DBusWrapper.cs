@@ -13,12 +13,12 @@ namespace FreedesktopSecretService.DBusInterfaces
         private static readonly string NAME = "org.freedesktop.secrets";
 
         internal Connection SessionConnection;
-        internal SecretService _Service;
-        internal IPluginHost Host;
+        private SecretService _service;
+        private readonly FreedesktopSecretServiceExt _plugin;
 
-        public DBusWrapper(IPluginHost plugin)
+        public DBusWrapper(FreedesktopSecretServiceExt plugin)
         {
-            Host = plugin;
+            _plugin = plugin;
             
             // Initialize DBus service
             Task.Run(async () =>
@@ -43,9 +43,9 @@ namespace FreedesktopSecretService.DBusInterfaces
 
             try
             {
-                _Service = new SecretService(this);
+                _service = new SecretService(_plugin);
                 await SessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
-                await SessionConnection.RegisterObjectAsync(_Service);
+                await SessionConnection.RegisterObjectAsync(_service);
             }
             catch (Exception e)
             {

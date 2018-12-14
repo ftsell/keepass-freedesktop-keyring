@@ -6,14 +6,14 @@ namespace FreedesktopSecretService
     public sealed class FreedesktopSecretServiceExt : Plugin
     {
         internal IPluginHost Host;
-        private DBusWrapper _dbus;
+        internal DBusWrapper Dbus;
 
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;
 
             Host = host;
-            _dbus = new DBusWrapper(host);
+            Dbus = new DBusWrapper(this);
             
             return true;
         }

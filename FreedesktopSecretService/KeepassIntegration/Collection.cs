@@ -9,11 +9,13 @@ namespace FreedesktopSecretService.KeepassIntegration
 {
     public class Collection : DBusImplementation.Collection
     {
-        private PwDatabase DB;
+        private readonly PwDatabase _db;
+        private readonly FreedesktopSecretServiceExt _plugin;
         
-        public Collection(PwDatabase db, DBusWrapper dbus) : base(dbus, db.Name.MD5Hash())
+        public Collection(PwDatabase db, FreedesktopSecretServiceExt plugin) : base(plugin.Dbus, db.Name.MD5Hash())
         {
-            DB = db;
+            _db = db;
+            _plugin = plugin;
             
             RegisterDatabaseItems();
         }
@@ -26,13 +28,13 @@ namespace FreedesktopSecretService.KeepassIntegration
                 {
                     
                     var i = 0; // TODO Remove this restriction
-                    foreach (var entry in DB.RootGroup.GetEntries(true))
+                    foreach (var entry in _db.RootGroup.GetEntries(true))
                     {
                         i++;
                         if (i > 2)
                             break;
 
-                        var item = new Item(Dbus, this, entry);
+                        var item = new Item(_plugin, this, entry);
                         await Dbus.SessionConnection.RegisterObjectAsync(item);
                     }
                     
