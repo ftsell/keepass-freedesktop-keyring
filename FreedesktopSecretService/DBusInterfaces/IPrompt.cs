@@ -19,6 +19,6 @@ namespace FreedesktopSecretService.DBusInterfaces
         // Signals
         //
 
-        Task<IDisposable> WatchCompleteddAsync(Action<(bool dismissed, object result)> handler);
+        Task<IDisposable> WatchCompletedAsync(Action<(bool dismissed, object result)> handler);
     }
 }

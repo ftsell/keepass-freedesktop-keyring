@@ -18,7 +18,7 @@ namespace FreedesktopSecretService.DBusInterfaces
             throw new NotImplementedException();
         }
 
-        public Task<IDisposable> WatchCompleteddAsync(Action<(bool dismissed, object result)> handler)
+        public Task<IDisposable> WatchCompletedAsync(Action<(bool dismissed, object result)> handler)
         {
             throw new NotImplementedException();
         }
