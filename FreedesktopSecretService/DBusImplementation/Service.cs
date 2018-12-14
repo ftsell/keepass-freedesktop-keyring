@@ -39,6 +39,7 @@ namespace FreedesktopSecretService.DBusImplementation
                 return ("", session.ObjectPath);
             }
 
+            Console.WriteLine($"Algorithm {algorithm} not supported on this service");
             throw new NotSupportedException();
         }
 
@@ -51,11 +52,18 @@ namespace FreedesktopSecretService.DBusImplementation
         public async Task<(ObjectPath[] unlocked, ObjectPath[] locked)> SearchItemAsync(
             IDictionary<string, string> attributes)
         {
+            Console.WriteLine($"Search attempted");
             throw new NotImplementedException();
         }
 
         public async Task<(ObjectPath[] unlocked, ObjectPath prompt)> UnlockAsync(ObjectPath[] objects)
         {
+            // Don't unlock anything if no objects were specified
+            if (objects.Length == 0)
+                return (new ObjectPath[0], new ObjectPath("/"));
+            
+            Console.WriteLine($"Unlock requested for {string.Join(", ", objects)}");
+            
             throw new NotImplementedException();
         }
 
@@ -66,6 +74,7 @@ namespace FreedesktopSecretService.DBusImplementation
 
         public async Task<IDictionary<ObjectPath, string>> GetSecretsAsync(ObjectPath[] items, ObjectPath session)
         {
+            Console.WriteLine("Get secrets attempted");
             throw new NotImplementedException();
         }
 
@@ -79,6 +88,7 @@ namespace FreedesktopSecretService.DBusImplementation
                 return Collections[0];
             }
 
+            Console.WriteLine($"Alias {name} not found");
             throw new NotImplementedException(); // Correct aliases still need to be implemented
         }
 
