@@ -95,26 +95,143 @@ namespace FreedesktopSecretService.DBusImplementation
         // Signals
         //
 
-        public async Task<IDisposable> WatchCollectionCreatedAsync(Action<ObjectPath> handler)
+        #region Collection created
+        private readonly IList<Action<ObjectPath>> _collectionCreatedHandlers = new List<Action<ObjectPath>>();
+        
+        private class CollectionCreatedDisposable : IDisposable
         {
-            throw new NotImplementedException();
+            private Action<ObjectPath> _handler;
+            private SecretService _service;
+
+            public CollectionCreatedDisposable(Action<ObjectPath> handler, SecretService service)
+            {
+                _handler = handler;
+                _service = service;
+            }
+
+            public void Dispose()
+            {
+                _service._collectionCreatedHandlers.Remove(_handler);
+            }
         }
 
+        public async Task<IDisposable> WatchCollectionCreatedAsync(Action<ObjectPath> handler)
+        {
+            _collectionCreatedHandlers.Add(handler);
+            return new CollectionCreatedDisposable(handler, this);
+        }
+
+        protected void TriggerCollectionCreated(ObjectPath path)
+        {
+            foreach (var handler in _collectionCreatedHandlers)
+                handler.Invoke(path);
+        }
+        #endregion
+
+        #region Collection deleted   
+        
+        private readonly IList<Action<ObjectPath>> _collectionDeletedHandlers = new List<Action<ObjectPath>>();
+
+        private class CollectionDeletedDisposable : IDisposable
+        {
+            private SecretService _service;
+            private Action<ObjectPath> _handler;
+
+            public CollectionDeletedDisposable(Action<ObjectPath> handler, SecretService service)
+            {
+                _handler = handler;
+                _service = service;
+            }
+
+            public void Dispose()
+            {
+                _service._collectionDeletedHandlers.Remove(_handler);
+            }
+        }
+        
         public async Task<IDisposable> WatchCollectionDeletedAsync(Action<ObjectPath> handler)
         {
-            throw new NotImplementedException();
+            _collectionDeletedHandlers.Add(handler);
+            return new CollectionDeletedDisposable(handler, this);
+        }
+
+        protected void TriggerCollectionDeleted(ObjectPath path)
+        {
+            foreach (var handler in _collectionDeletedHandlers)
+                handler.Invoke(path);
+        }
+        
+        #endregion
+        
+        #region Collection changed
+        
+        private IList<Action<ObjectPath>> _collectionChangedHandlers = new List<Action<ObjectPath>>();
+
+        private class CollectionChangedDisposable : IDisposable
+        {
+            private SecretService _service;
+            private Action<ObjectPath> _handler;
+
+            public CollectionChangedDisposable(Action<ObjectPath> handler, SecretService service)
+            {
+                _handler = handler;
+                _service = service;
+            }
+
+            public void Dispose()
+            {
+                _service._collectionChangedHandlers.Remove(_handler);
+            }
         }
 
         public async Task<IDisposable> WatchCollectionChangedAsync(Action<ObjectPath> handler)
         {
-            throw new NotImplementedException();
+            _collectionChangedHandlers.Add(handler);
+            return new CollectionChangedDisposable(handler, this);
+        }
+
+        protected void TriggerCollectionChanged(ObjectPath path)
+        {
+            foreach (var handler in _collectionChangedHandlers)
+                handler.Invoke(path);
+        }
+        
+        #endregion
+        
+        #region Property changed
+        
+        private IList<Action<PropertyChanges>> _propertyChangesHandlers = new List<Action<PropertyChanges>>();
+
+        private class PropertyChangesDisposable : IDisposable
+        {
+            private SecretService _service;
+            private Action<PropertyChanges> _handler;
+
+            public PropertyChangesDisposable(Action<PropertyChanges> handler, SecretService service)
+            {
+                _handler = handler;
+                _service = service;
+            }
+
+            public void Dispose()
+            {
+                _service._propertyChangesHandlers.Remove(_handler);
+            }
         }
 
         public async Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler)
         {
-            throw new NotImplementedException();
+            _propertyChangesHandlers.Add(handler);
+            return new PropertyChangesDisposable(handler, this);
         }
 
+        protected void TriggerPropertyChanged(PropertyChanges changes)
+        {
+            foreach (var handler in _propertyChangesHandlers)
+                handler.Invoke(changes);
+        }
+
+        #endregion
         #endregion
 
 
