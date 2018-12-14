@@ -17,10 +17,14 @@ namespace FreedesktopSecretService.KeepassIntegration
 
         private readonly IList<Item> _items = new List<Item>();
 
-        internal override ObjectPath[] Items => (
+        protected override ObjectPath[] Items => (
             from i in _items
             select i.ObjectPath
         ).ToArray();
+
+        protected override string Label { get; set; } = "TestLabel";
+        protected override int Created { get; } = 0;
+        protected override int Modified { get; } = 0;
 
 
         public Collection(PwDatabase db, FreedesktopSecretServiceExt plugin) : base(plugin.Dbus, db.Name.MD5Hash())

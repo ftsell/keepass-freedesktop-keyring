@@ -33,6 +33,28 @@ namespace FreedesktopSecretService.DBusInterfaces
         //
         // Properties
         //
+        Task<object> GetAsync(string prop);
+        Task<CollectionProperties> GetAllAsync();
+        Task SetAsync(string prop, object val);
+        Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler);
 
+    }
+
+    [Dictionary]
+    public struct CollectionProperties
+    {
+        [Property(Access = PropertyAccess.Read)]
+        public ObjectPath[] Items;
+
+        public string Label;
+
+        [Property(Access = PropertyAccess.Read)]
+        public bool Locked;
+
+        [Property(Access = PropertyAccess.Read)]
+        public int Created;
+
+        [Property(Access = PropertyAccess.Read)]
+        public int Modified;
     }
 }

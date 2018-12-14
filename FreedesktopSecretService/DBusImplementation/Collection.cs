@@ -8,11 +8,9 @@ using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusImplementation
 {
-    public class Collection : ICollection
+    public abstract class Collection : ICollection
     {
         public ObjectPath ObjectPath { get; }
-
-        internal virtual ObjectPath[] Items => new ObjectPath[0];
 
         private readonly DBusWrapper _dbus;
 
@@ -175,6 +173,94 @@ namespace FreedesktopSecretService.DBusImplementation
         }
 
         #endregion
+        
+        #region Property changed
+        
+        private IList<Action<PropertyChanges>> _propertyChangesHandlers = new List<Action<PropertyChanges>>();
+
+        private class PropertyChangesDisposable : IDisposable
+        {
+            private Collection _collection;
+            private Action<PropertyChanges> _handler;
+
+            public PropertyChangesDisposable(Action<PropertyChanges> handler, Collection collection)
+            {
+                _handler = handler;
+                _collection = collection;
+            }
+
+            public void Dispose()
+            {
+                _collection._propertyChangesHandlers.Remove(_handler);
+            }
+        }
+        
+        public async Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler)
+        {
+            _propertyChangesHandlers.Add(handler);
+            return new PropertyChangesDisposable(handler, this);
+        }
+
+        protected void TriggerPropertyChanged(PropertyChanges changes)
+        {
+            foreach (var handler in _propertyChangesHandlers)
+                handler.Invoke(changes);
+        }
+        
+        #endregion
+        
+        #endregion
+
+        #region Properties
+        //
+        // Properties
+        //
+        protected abstract ObjectPath[] Items { get; }
+        protected abstract string Label { get; set; }
+        protected abstract int Created { get; }
+        protected abstract int Modified { get; }
+
+        public async Task<object> GetAsync(string prop)
+        {
+            switch (prop)
+            {
+                case nameof(CollectionProperties.Label):
+                    return Label;
+                case nameof(CollectionProperties.Locked):
+                    return false;
+                case nameof(CollectionProperties.Created):
+                    return Created;
+                case nameof(CollectionProperties.Modified):
+                    return Modified;
+                case nameof(CollectionProperties.Items):
+                    return Items;
+                
+                default:
+                    throw new ArgumentException();
+            }
+        }
+
+        public async Task<CollectionProperties> GetAllAsync()
+        {
+            return new CollectionProperties
+            {
+                Created = Created,
+                Label = Label,
+                Items = Items,
+                Modified = Modified,
+                Locked = false
+            };
+        }
+
+        public async Task SetAsync(string prop, object val)
+        {
+            if (prop == nameof(CollectionProperties.Label) && val is string)
+                Label = val as string;
+
+            else
+                throw new ArgumentException();
+        }
+
         #endregion
     }
 }
