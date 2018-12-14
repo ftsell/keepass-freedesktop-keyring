@@ -11,12 +11,33 @@ namespace FreedesktopSecretService.DBusImplementation
     public class Collection : ICollection
     {
         public ObjectPath ObjectPath { get; }
-        internal readonly DBusWrapper Dbus;
+
+        internal virtual ObjectPath[] Items => new ObjectPath[0];
+
+        private readonly DBusWrapper _dbus;
 
         internal Collection(DBusWrapper dbus, string uuid)
         {
-            Dbus = dbus;
+            _dbus = dbus;
             ObjectPath = new ObjectPath($"/org/freedesktop/secrets/collection/{uuid}");
+
+            RegisterSelf();
+        }
+
+        private void RegisterSelf()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    await _dbus.SessionConnection.RegisterObjectAsync(this);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    throw;
+                }
+            });
         }
 
 

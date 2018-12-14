@@ -10,26 +10,48 @@ namespace FreedesktopSecretService.DBusImplementation
     {
         public ObjectPath ObjectPath { get; }
 
-        protected readonly DBusWrapper Dbus;
+        private readonly DBusWrapper _dbus;
 
-        private ItemProperties _props;
-
+        private ItemProperties Props => new ItemProperties()
+        {
+            Label = Label,
+            Created = Created,
+            Modified = Modified,
+            Attributes = Attributes,
+            Locked = false
+        };
+        
+        protected abstract string Label { get; }
+        protected abstract int Created { get; }
+        protected abstract int Modified { get; }
+        protected abstract IDictionary<string, string> Attributes { get; }
+        
         protected abstract string Secret { get; }
 
+        
         public Item(DBusWrapper dbus, Collection collection, string uuid)
         {
-            Dbus = dbus;
-
-            _props = new ItemProperties
-            {
-                Created = 0,
-                Modified = 0,
-                Locked = false,
-                Attributes = new Dictionary<string, string>(),
-                Label = "testLabel"
-            };
-
             ObjectPath = new ObjectPath(collection.ObjectPath + $"/{uuid}");
+            _dbus = dbus;
+            
+            RegisterSelf();
+        }
+
+        private void RegisterSelf()
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+
+                    await _dbus.SessionConnection.RegisterObjectAsync(this);
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            });
         }
 
         
@@ -40,7 +62,7 @@ namespace FreedesktopSecretService.DBusImplementation
 
         public Task<ObjectPath> DeleteAsync()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public async Task<Secret> GetSecretAsync(ObjectPath session)
@@ -106,15 +128,15 @@ namespace FreedesktopSecretService.DBusImplementation
             switch (prop)
             {
                 case nameof(ItemProperties.Attributes):
-                    return _props.Attributes;
+                    return Props.Attributes;
                 case nameof(ItemProperties.Created):
-                    return _props.Created;
+                    return Props.Created;
                 case nameof(ItemProperties.Label):
-                    return _props.Label;
+                    return Props.Label;
                 case nameof(ItemProperties.Locked):
-                    return _props.Locked;
+                    return Props.Locked;
                 case nameof(ItemProperties.Modified):
-                    return _props.Modified;
+                    return Props.Modified;
                 
                 default:
                     throw new ArgumentException();
@@ -123,7 +145,7 @@ namespace FreedesktopSecretService.DBusImplementation
 
         public async Task<ItemProperties> GetAllAsync()
         {
-            return _props;
+            return Props;
         }
 
         public Task SetAsync(string prop, object val)

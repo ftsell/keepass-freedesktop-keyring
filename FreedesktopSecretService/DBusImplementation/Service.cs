@@ -12,18 +12,17 @@ namespace FreedesktopSecretService.DBusImplementation
     {
         public ObjectPath ObjectPath { get; } = new ObjectPath("/org/freedesktop/secrets");
 
-        internal ObjectPath[] Collections => new ObjectPath[0];
+        protected virtual ObjectPath[] Collections => new ObjectPath[0];
 
-        protected readonly DBusWrapper DBus;
+        private readonly DBusWrapper _dBus;
 
         internal SecretService(DBusWrapper dBus)
         {
-            DBus = dBus;
+            _dBus = dBus;
         }
 
 
         #region Methods
-
         //
         // Methods
         //
@@ -33,7 +32,7 @@ namespace FreedesktopSecretService.DBusImplementation
             if (algorithm == "plain")
             {
                 var session = new Session();
-                await DBus.SessionConnection.RegisterObjectAsync(session);
+                await _dBus.SessionConnection.RegisterObjectAsync(session);
 
                 Console.WriteLine($"Opened new {algorithm} Session under {session.ObjectPath}");
 
@@ -92,7 +91,6 @@ namespace FreedesktopSecretService.DBusImplementation
 
 
         #region Signals
-
         //
         // Signals
         //
@@ -121,7 +119,6 @@ namespace FreedesktopSecretService.DBusImplementation
 
 
         #region Properties
-
         //
         // Properties
         //
