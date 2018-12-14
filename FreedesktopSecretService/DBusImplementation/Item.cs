@@ -1,37 +1,39 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using KeePassLib;
+using FreedesktopSecretService.DBusInterfaces;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusInterfaces
+namespace FreedesktopSecretService.DBusImplementation
 {
-    public class Item : IItem
+    public abstract class Item : IItem
     {
         public ObjectPath ObjectPath { get; }
 
-        private PwEntry _entry;
-
-        private DBusWrapper _dbus;
+        protected readonly DBusWrapper Dbus;
 
         private ItemProperties _props;
 
-        public Item(DBusWrapper dbus, Collection collection, PwEntry entry)
+        protected abstract string Secret { get; }
+
+        public Item(DBusWrapper dbus, Collection collection, string uuid)
         {
-            _entry = entry;
-            _dbus = dbus;
+            Dbus = dbus;
 
-            _props = new ItemProperties();
-            _props.Created = 0;
-            _props.Modified = 0;
-            _props.Locked = false;
-            _props.Attributes = new Dictionary<string, string>();
-            _props.Label = "testLabel";
+            _props = new ItemProperties
+            {
+                Created = 0,
+                Modified = 0,
+                Locked = false,
+                Attributes = new Dictionary<string, string>(),
+                Label = "testLabel"
+            };
 
-            ObjectPath = new ObjectPath(collection.ObjectPath + $"/{entry.Uuid.ToHexString()}");
+            ObjectPath = new ObjectPath(collection.ObjectPath + $"/{uuid}");
         }
 
+        
+        #region Methods
         //
         // Methods
         //
@@ -44,12 +46,9 @@ namespace FreedesktopSecretService.DBusInterfaces
         public async Task<Secret> GetSecretAsync(ObjectPath session)
         {
             // Since we only support plain-text transfer of secret it is enough to know that the specified session exists
-            if (_dbus._Service._Sessions.ContainsKey(session) || true) // TODO Re-enable session based authentication
+            if (true) // TODO Re-enable session based authentication
             {
-                var title = _entry.Strings.Get("Title");
-                var password = _entry.Strings.Get("Password");
-
-                return new Secret(session, password.ReadString());
+                return new Secret(session, Secret);
             }
 
             throw new UnauthorizedAccessException();
@@ -59,10 +58,15 @@ namespace FreedesktopSecretService.DBusInterfaces
         {
             throw new System.NotImplementedException();
         }
-
+        
+        #endregion
+        
+        
+        #region Signals
         //
         // Signals
         //
+        
         private readonly HashSet<Action<PropertyChanges>> _changeWatchers = new HashSet<Action<PropertyChanges>>();
 
         private class ChangeDisposable : IDisposable
@@ -88,7 +92,11 @@ namespace FreedesktopSecretService.DBusInterfaces
             _changeWatchers.Add(handler);
             return new ChangeDisposable(handler, this);
         }
-
+        
+        #endregion
+        
+        
+        #region Properties
         //
         // Properties
         //
@@ -123,5 +131,7 @@ namespace FreedesktopSecretService.DBusInterfaces
             Console.WriteLine("Set");
             throw new NotImplementedException();
         }
+        
+        #endregion
     }
 }

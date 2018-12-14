@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using KeePassLib;
+using FreedesktopSecretService.KeepassIntegration;
+using KeePass.Plugins;
 using Tmds.DBus;
 
 namespace FreedesktopSecretService.DBusInterfaces
@@ -14,15 +14,13 @@ namespace FreedesktopSecretService.DBusInterfaces
 
         internal Connection SessionConnection;
         internal SecretService _Service;
+        internal IPluginHost Host;
 
-        public DBusWrapper(FreedesktopSecretServiceExt plugin)
+        public DBusWrapper(IPluginHost plugin)
         {
-            // Register event listeners on KeePass Events
-            plugin._Host.MainWindow.FileOpened += (sender, e) => Task.Run(() 
-                => _Service.RegisterDatabaseAsync(e.Database));
-            plugin._Host.MainWindow.FileClosingPre += (sender, e) => Task.Run(() 
-                => _Service.UnRegisterDatabaseAsync(e.Database));
+            Host = plugin;
             
+            // Initialize DBus service
             Task.Run(async () =>
             {
                 if (!await InitializeDBusAsync())

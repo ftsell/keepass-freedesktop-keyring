@@ -45,8 +45,15 @@ namespace FreedesktopSecretService.DBusInterfaces
         // Properties
         //
         Task<object> GetAsync(string prop);
-        Task<IDictionary<string, object>> GetAllAsync();
+        Task<ServiceProperties> GetAllAsync();
         Task SetAsync(string prop, object val);
         Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler);
+    }
+
+    [Dictionary]
+    public class ServiceProperties
+    {
+        [Property(Access = PropertyAccess.Read)]
+        public ObjectPath[] Collections;
     }
 }

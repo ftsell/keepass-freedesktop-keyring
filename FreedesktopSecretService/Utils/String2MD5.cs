@@ -3,7 +3,7 @@ using System.Text;
 
 namespace FreedesktopSecretService.Utils
 {
-    public static class String2MD5
+    public static class String2Md5
     {
         public static string MD5Hash(this string input)
         {

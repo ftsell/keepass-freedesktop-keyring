@@ -14,8 +14,9 @@ namespace FreedesktopSecretService.DBusInterfaces
         public Secret(ObjectPath session, string value)
         {
             this.session = session;
-            this.parameters = new byte[0];
             this.value = Encoding.UTF8.GetBytes(value);
+            
+            parameters = new byte[0];
             content_type = "text/plain; charset=utf8";
         }
     }
