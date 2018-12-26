@@ -51,7 +51,7 @@ namespace FreedesktopSecretService.DBusImplementation
             throw new NotImplementedException();
         }
 
-        public async Task<(ObjectPath[] unlocked, ObjectPath[] locked)> SearchItemAsync(
+        public async Task<(ObjectPath[] unlocked, ObjectPath[] locked)> SearchItemsAsync(
             IDictionary<string, string> attributes)
         {
             Console.WriteLine($"Search attempted");
