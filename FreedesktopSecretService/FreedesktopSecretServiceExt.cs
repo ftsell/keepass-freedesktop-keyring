@@ -1,4 +1,5 @@
-﻿using FreedesktopSecretService.DBusInterfaces;
+﻿using FreedesktopSecretService.DBusImplementation;
+using FreedesktopSecretService.DBusInterfaces;
 using KeePass.Plugins;
 
 namespace FreedesktopSecretService

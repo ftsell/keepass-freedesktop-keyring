@@ -1,15 +1,20 @@
 using System;
 using System.Threading.Tasks;
+using FreedesktopSecretService.DBusInterfaces;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusInterfaces
+namespace FreedesktopSecretService.DBusImplementation
 {
     public class Session : ISession
     {
         public ObjectPath ObjectPath { get; }
 
-        public Session()
+        private readonly DBusWrapper _dbus;
+
+        public Session(DBusWrapper dbus)
         {
+            _dbus = dbus;
+            
             var rand = new Random();
             var id = rand.Next();
             
@@ -20,9 +25,10 @@ namespace FreedesktopSecretService.DBusInterfaces
         // Methods
         //
 
-        public Task CloseAsync()
+        public async Task CloseAsync()
         {
-            throw new System.NotImplementedException();
+            Console.WriteLine($"Closed session {ObjectPath}");
+            _dbus.Service.Sessions.Remove(this);
         }
     }
 }

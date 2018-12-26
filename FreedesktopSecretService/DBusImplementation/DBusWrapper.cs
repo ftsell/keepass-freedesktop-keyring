@@ -1,10 +1,8 @@
 using System;
 using System.Threading.Tasks;
-using FreedesktopSecretService.KeepassIntegration;
-using KeePass.Plugins;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusInterfaces
+namespace FreedesktopSecretService.DBusImplementation
 {
     public class DBusWrapper
     {
@@ -13,7 +11,7 @@ namespace FreedesktopSecretService.DBusInterfaces
         private static readonly string NAME = "org.freedesktop.secrets";
 
         internal Connection SessionConnection;
-        private SecretService _service;
+        internal KeepassIntegration.SecretService Service;
         private readonly FreedesktopSecretServiceExt _plugin;
 
         public DBusWrapper(FreedesktopSecretServiceExt plugin)
@@ -43,9 +41,9 @@ namespace FreedesktopSecretService.DBusInterfaces
 
             try
             {
-                _service = new SecretService(_plugin);
+                Service = new KeepassIntegration.SecretService(_plugin);
                 await SessionConnection.RegisterServiceAsync(NAME, ServiceRegistrationOptions.None);
-                await SessionConnection.RegisterObjectAsync(_service);
+                await SessionConnection.RegisterObjectAsync(Service);
             }
             catch (Exception e)
             {

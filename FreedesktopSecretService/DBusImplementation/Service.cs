@@ -13,6 +13,8 @@ namespace FreedesktopSecretService.DBusImplementation
         public ObjectPath ObjectPath { get; } = new ObjectPath("/org/freedesktop/secrets");
 
         protected virtual ObjectPath[] Collections => new ObjectPath[0];
+        
+        internal readonly IList<Session> Sessions = new List<Session>();
 
         private readonly DBusWrapper _dBus;
 
@@ -31,8 +33,9 @@ namespace FreedesktopSecretService.DBusImplementation
         {
             if (algorithm == "plain")
             {
-                var session = new Session();
+                var session = new Session(_dBus);
                 await _dBus.SessionConnection.RegisterObjectAsync(session);
+                Sessions.Add(session);
 
                 Console.WriteLine($"Opened new {algorithm} Session under {session.ObjectPath}");
 
