@@ -11,14 +11,14 @@ namespace FreedesktopSecretService.KeepassIntegration
 {
     public class Collection : DBusImplementation.Collection
     {
-        private readonly PwDatabase _db;
+        internal readonly PwDatabase Db;
 
         private readonly FreedesktopSecretServiceExt _plugin;
 
-        private readonly IList<Item> _items = new List<Item>();
+        internal readonly IList<Item> PwEntries = new List<Item>();
 
         protected override ObjectPath[] Items => (
-            from i in _items
+            from i in PwEntries
             select i.ObjectPath
         ).ToArray();
 
@@ -29,7 +29,7 @@ namespace FreedesktopSecretService.KeepassIntegration
 
         public Collection(PwDatabase db, FreedesktopSecretServiceExt plugin) : base(plugin.Dbus, db.Name.MD5Hash())
         {
-            _db = db;
+            Db = db;
             _plugin = plugin;
 
             RegisterDatabaseItems();
@@ -39,7 +39,7 @@ namespace FreedesktopSecretService.KeepassIntegration
         {
             var i = 0; // TODO Remove this restriction
             // Get all entries in this group and entries of subgroups
-            foreach (var entry in _db.RootGroup.GetEntries(true))
+            foreach (var entry in Db.RootGroup.GetEntries(true))
             {
                 i++;
                 if (i > 2)
@@ -47,7 +47,7 @@ namespace FreedesktopSecretService.KeepassIntegration
                 
                 // Create respective item object for PwEntry
                 var item = new Item(_plugin, this, entry);
-                _items.Add(item);
+                PwEntries.Add(item);
             }
         }
     }

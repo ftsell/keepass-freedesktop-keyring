@@ -4,10 +4,11 @@ using System.Threading.Tasks;
 using FreedesktopSecretService.DBusInterfaces;
 using Tmds.DBus;
 using System.Security.Cryptography;
+using KeePassLib;
 
 namespace FreedesktopSecretService.DBusImplementation
 {
-    public class SecretService : ISecretService
+    public abstract class SecretService : ISecretService
     {
         public ObjectPath ObjectPath { get; } = new ObjectPath("/org/freedesktop/secrets");
 
@@ -54,9 +55,10 @@ namespace FreedesktopSecretService.DBusImplementation
         public async Task<(ObjectPath[] unlocked, ObjectPath[] locked)> SearchItemsAsync(
             IDictionary<string, string> attributes)
         {
-            Console.WriteLine($"Search attempted");
-            throw new NotImplementedException();
+            return (SearchPwEntries(attributes), new ObjectPath[0]);
         }
+
+        protected abstract ObjectPath[] SearchPwEntries(IDictionary<string, string> attributes);
 
         public async Task<(ObjectPath[] unlocked, ObjectPath prompt)> UnlockAsync(ObjectPath[] objects)
         {

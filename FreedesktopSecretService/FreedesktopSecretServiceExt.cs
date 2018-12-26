@@ -9,6 +9,8 @@ namespace FreedesktopSecretService
         internal IPluginHost Host;
         internal DBusWrapper Dbus;
 
+        internal readonly string DATA_PREFIX = "freedesktop-secret-service:";
+
         public override bool Initialize(IPluginHost host)
         {
             if (host == null) return false;

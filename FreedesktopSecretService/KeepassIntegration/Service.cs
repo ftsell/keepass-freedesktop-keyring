@@ -18,6 +18,18 @@ namespace FreedesktopSecretService.KeepassIntegration
             select i.ObjectPath
         ).ToArray();
 
+        protected override ObjectPath[] SearchPwEntries(IDictionary<string, string> attributes)
+        {
+            // Find every entry from every collection where all searched attributes match
+            return (
+                from collection in _collections
+                from entry in collection.PwEntries
+                where attributes.All(
+                    attr => entry.PwEntry.CustomData.Contains(
+                        new KeyValuePair<string, string>(_plugin.DATA_PREFIX + attr.Key, attr.Value)))
+                select entry.ObjectPath).ToArray();
+        }
+
         public SecretService(FreedesktopSecretServiceExt plugin) : base(plugin.Dbus)
         {
             _plugin = plugin;
