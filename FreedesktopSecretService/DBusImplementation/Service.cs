@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using FreedesktopSecretService.DBusInterfaces;
-using KeePassLib;
 using Tmds.DBus;
+using System.Security.Cryptography;
 
 namespace FreedesktopSecretService.DBusImplementation
 {
@@ -13,7 +12,7 @@ namespace FreedesktopSecretService.DBusImplementation
         public ObjectPath ObjectPath { get; } = new ObjectPath("/org/freedesktop/secrets");
 
         protected virtual ObjectPath[] Collections => new ObjectPath[0];
-        
+
         internal readonly IList<Session> Sessions = new List<Session>();
 
         private readonly DBusWrapper _dBus;
@@ -23,8 +22,8 @@ namespace FreedesktopSecretService.DBusImplementation
             _dBus = dBus;
         }
 
-
         #region Methods
+
         //
         // Methods
         //
@@ -37,13 +36,13 @@ namespace FreedesktopSecretService.DBusImplementation
                 await _dBus.SessionConnection.RegisterObjectAsync(session);
                 Sessions.Add(session);
 
-                Console.WriteLine($"Opened new {algorithm} Session under {session.ObjectPath}");
+                Console.WriteLine($"Opened new plain {algorithm} Session under {session.ObjectPath}");
 
                 return ("", session.ObjectPath);
             }
 
             Console.WriteLine($"Algorithm {algorithm} not supported on this service");
-            throw new NotSupportedException();
+            throw new DBusException("org.freedesktop.DBus.Error.NotSupported", $"The algorithm {algorithm} is not supported");
         }
 
         public async Task<(ObjectPath collection, ObjectPath prompt)> CreateCollectionAsync(
@@ -64,9 +63,9 @@ namespace FreedesktopSecretService.DBusImplementation
             // Don't unlock anything if no objects were specified
             if (objects.Length == 0)
                 return (new ObjectPath[0], new ObjectPath("/"));
-            
+
             Console.WriteLine($"Unlock requested for {string.Join(", ", objects)}");
-            
+
             throw new NotImplementedException();
         }
 
@@ -104,13 +103,15 @@ namespace FreedesktopSecretService.DBusImplementation
 
 
         #region Signals
+
         //
         // Signals
         //
 
         #region Collection created
+
         private readonly IList<Action<ObjectPath>> _collectionCreatedHandlers = new List<Action<ObjectPath>>();
-        
+
         private class CollectionCreatedDisposable : IDisposable
         {
             private Action<ObjectPath> _handler;
@@ -139,10 +140,11 @@ namespace FreedesktopSecretService.DBusImplementation
             foreach (var handler in _collectionCreatedHandlers)
                 handler.Invoke(path);
         }
+
         #endregion
 
         #region Collection deleted   
-        
+
         private readonly IList<Action<ObjectPath>> _collectionDeletedHandlers = new List<Action<ObjectPath>>();
 
         private class CollectionDeletedDisposable : IDisposable
@@ -161,7 +163,7 @@ namespace FreedesktopSecretService.DBusImplementation
                 _service._collectionDeletedHandlers.Remove(_handler);
             }
         }
-        
+
         public async Task<IDisposable> WatchCollectionDeletedAsync(Action<ObjectPath> handler)
         {
             _collectionDeletedHandlers.Add(handler);
@@ -173,11 +175,11 @@ namespace FreedesktopSecretService.DBusImplementation
             foreach (var handler in _collectionDeletedHandlers)
                 handler.Invoke(path);
         }
-        
+
         #endregion
-        
+
         #region Collection changed
-        
+
         private IList<Action<ObjectPath>> _collectionChangedHandlers = new List<Action<ObjectPath>>();
 
         private class CollectionChangedDisposable : IDisposable
@@ -208,11 +210,11 @@ namespace FreedesktopSecretService.DBusImplementation
             foreach (var handler in _collectionChangedHandlers)
                 handler.Invoke(path);
         }
-        
+
         #endregion
-        
+
         #region Property changed
-        
+
         private IList<Action<PropertyChanges>> _propertyChangesHandlers = new List<Action<PropertyChanges>>();
 
         private class PropertyChangesDisposable : IDisposable
@@ -245,10 +247,12 @@ namespace FreedesktopSecretService.DBusImplementation
         }
 
         #endregion
+
         #endregion
 
 
         #region Properties
+
         //
         // Properties
         //
