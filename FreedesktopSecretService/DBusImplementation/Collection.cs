@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FreedesktopSecretService.DBusInterfaces;
+using FreedesktopSecretService.KeepassIntegration.PromptTypes;
 using FreedesktopSecretService.Utils;
 using KeePassLib;
 using Tmds.DBus;
@@ -55,27 +56,38 @@ namespace FreedesktopSecretService.DBusImplementation
             throw new NotImplementedException();
         }
 
-        public Task<(ObjectPath item, ObjectPath prompt)> CreateItemAsync(IDictionary<string, object> properties,
+        public async Task<(ObjectPath item, ObjectPath prompt)> CreateItemAsync(IDictionary<string, object> properties,
             Secret secret, bool replace)
         {
-            throw new NotImplementedException();
+
+            Prompt prompt = new ItemCreationPrompt();
+            
+#if DEBUG
+            var acc = "ItemCreation prompt created for item with props: ";
+            foreach (var i in properties)
+                acc += $"{i.Key}={i.Value} ";
+            Console.WriteLine(acc);
+#endif
+
+            // We always create a prompt
+            return (new ObjectPath("/"), prompt.ObjectPath);
         }
 
         #endregion
 
 
         #region Singals
+
         //
         // Signals
         //
-        
+
         #region Item created
-        
+
         private IList<Action<ObjectPath>> _itemCreatedHandlers = new List<Action<ObjectPath>>();
 
         private class ItemCreatedDisposable : IDisposable
         {
-
             private Collection _collection;
             private Action<ObjectPath> _handlers;
 
@@ -101,16 +113,15 @@ namespace FreedesktopSecretService.DBusImplementation
             foreach (var handler in _itemCreatedHandlers)
                 handler.Invoke(path);
         }
-        
+
         #endregion
-        
+
         #region Item deleted
 
         private IList<Action<ObjectPath>> _itemDeletedHandlers = new List<Action<ObjectPath>>();
 
         private class ItemDeletedDisposable : IDisposable
         {
-
             private Collection _collection;
             private Action<ObjectPath> _handlers;
 
@@ -136,16 +147,15 @@ namespace FreedesktopSecretService.DBusImplementation
             foreach (var handler in _itemDeletedHandlers)
                 handler.Invoke(path);
         }
-        
+
         #endregion
-        
+
         #region Item changed
 
         private IList<Action<ObjectPath>> _itemChangedHandlers = new List<Action<ObjectPath>>();
 
         private class ItemChangedDisposable : IDisposable
         {
-
             private Collection _collection;
             private Action<ObjectPath> _handlers;
 
@@ -173,9 +183,9 @@ namespace FreedesktopSecretService.DBusImplementation
         }
 
         #endregion
-        
+
         #region Property changed
-        
+
         private IList<Action<PropertyChanges>> _propertyChangesHandlers = new List<Action<PropertyChanges>>();
 
         private class PropertyChangesDisposable : IDisposable
@@ -194,7 +204,7 @@ namespace FreedesktopSecretService.DBusImplementation
                 _collection._propertyChangesHandlers.Remove(_handler);
             }
         }
-        
+
         public async Task<IDisposable> WatchPropertiesAsync(Action<PropertyChanges> handler)
         {
             _propertyChangesHandlers.Add(handler);
@@ -206,12 +216,13 @@ namespace FreedesktopSecretService.DBusImplementation
             foreach (var handler in _propertyChangesHandlers)
                 handler.Invoke(changes);
         }
-        
+
         #endregion
-        
+
         #endregion
 
         #region Properties
+
         //
         // Properties
         //
@@ -234,7 +245,7 @@ namespace FreedesktopSecretService.DBusImplementation
                     return Modified;
                 case nameof(CollectionProperties.Items):
                     return Items;
-                
+
                 default:
                     throw new ArgumentException();
             }
