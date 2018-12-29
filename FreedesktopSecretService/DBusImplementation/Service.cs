@@ -85,7 +85,7 @@ namespace FreedesktopSecretService.DBusImplementation
 
             if (name == "default")
             {
-                return Collections[0];
+                return Collections[0];        // TODO Find out if keepass can designate a "default" database
             }
 
             Console.WriteLine($"Alias {name} not found");
