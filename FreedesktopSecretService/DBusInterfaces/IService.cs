@@ -26,7 +26,7 @@ namespace FreedesktopSecretService.DBusInterfaces
 
         Task<(ObjectPath[] locked, ObjectPath prompt)> LockAsync(ObjectPath[] objects);
 
-        Task<IDictionary<ObjectPath, string>> GetSecretsAsync(ObjectPath[] items, ObjectPath session);
+        Task<IDictionary<ObjectPath, Secret>> GetSecretsAsync(ObjectPath[] items, ObjectPath session);
 
         Task<ObjectPath> ReadAliasAsync(string name);
 

@@ -76,11 +76,7 @@ namespace FreedesktopSecretService.DBusImplementation
             throw new NotImplementedException();
         }
 
-        public async Task<IDictionary<ObjectPath, string>> GetSecretsAsync(ObjectPath[] items, ObjectPath session)
-        {
-            Console.WriteLine("Get secrets attempted");
-            throw new NotImplementedException();
-        }
+        public abstract Task<IDictionary<ObjectPath, Secret>> GetSecretsAsync(ObjectPath[] items, ObjectPath session);
 
         public async Task<ObjectPath> ReadAliasAsync(string name)
         {

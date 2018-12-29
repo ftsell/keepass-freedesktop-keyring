@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using FreedesktopSecretService.DBusInterfaces;
 using KeePass.Forms;
 using Tmds.DBus;
 
@@ -12,7 +14,6 @@ namespace FreedesktopSecretService.KeepassIntegration
 
         private readonly IList<Collection> _collections = new List<Collection>();
 
-        // YAY, my very first LINQ magic ever :)
         protected override ObjectPath[] Collections => (
             from i in _collections
             select i.ObjectPath
@@ -21,13 +22,45 @@ namespace FreedesktopSecretService.KeepassIntegration
         protected override ObjectPath[] SearchPwEntries(IDictionary<string, string> attributes)
         {
             // Find every entry from every collection where all searched attributes match
-            return (
+            var result = (
                 from collection in _collections
                 from entry in collection.PwEntries
                 where attributes.All(
-                    attr => entry.PwEntry.CustomData.Contains(
-                        new KeyValuePair<string, string>(_plugin.DATA_PREFIX + attr.Key, attr.Value)))
-                select entry.ObjectPath).ToArray();
+                          attr => entry.PwEntry.CustomData.Contains(
+                              new KeyValuePair<string, string>(_plugin.DATA_PREFIX + attr.Key, attr.Value))) ||
+                      entry.PwEntry.Strings.Exists("Title") &&
+                      entry.PwEntry.Strings.Get("Title").ReadString() == "contact"
+                select entry.ObjectPath
+            ).ToArray();
+
+#if DEBUG
+            var acc = $"{result.Length} results for search: ";
+            foreach (var i in attributes)
+                acc += $"{i.Key}={i.Value} ";
+            Console.WriteLine(acc);
+#endif
+
+            return result;
+        }
+
+        public override async Task<IDictionary<ObjectPath, Secret>> GetSecretsAsync(ObjectPath[] items,
+            ObjectPath session)
+        {
+            // TODO Enable session authentication
+
+            var result = (
+                from coll in _collections
+                from entry in coll.PwEntries
+                where items.Contains(entry.ObjectPath)
+                select entry
+            ).ToDictionary(entry => entry.ObjectPath,
+                entry => new Secret(session, entry.PwEntry.Strings.ReadSafe("Password")));
+
+#if DEBUG
+            Console.WriteLine($"Queried {items.Length} secrets and got {result.Count}");
+#endif
+            
+            return result;
         }
 
         public SecretService(FreedesktopSecretServiceExt plugin) : base(plugin.Dbus)
