@@ -37,14 +37,9 @@ namespace FreedesktopSecretService.KeepassIntegration
 
         private void RegisterDatabaseItems()
         {
-            var i = 0; // TODO Remove this restriction
             // Get all entries in this group and entries of subgroups
             foreach (var entry in Db.RootGroup.GetEntries(true))
             {
-                i++;
-                if (i > 2)
-                    break;
-                
                 // Create respective item object for PwEntry
                 var item = new Item(_plugin, this, entry);
                 PwEntries.Add(item);
