@@ -14,6 +14,7 @@ namespace FreedesktopSecretService.DBusImplementation
 
         public Task DismissAsync()
         {
+            Console.WriteLine("Prompt dismissal attempted");
             throw new NotImplementedException();
         }
 

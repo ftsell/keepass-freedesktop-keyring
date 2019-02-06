@@ -20,20 +20,20 @@ namespace FreedesktopSecretService.DBusImplementation
             Attributes = Attributes,
             Locked = false
         };
-        
+
         protected abstract string Label { get; }
         protected abstract int Created { get; }
         protected abstract int Modified { get; }
         protected abstract IDictionary<string, string> Attributes { get; }
-        
+
         protected abstract string Secret { get; }
 
-        
+
         public Item(DBusWrapper dbus, Collection collection, string uuid)
         {
             ObjectPath = new ObjectPath(collection.ObjectPath + $"/{uuid}");
             _dbus = dbus;
-            
+
             RegisterSelf();
         }
 
@@ -43,9 +43,7 @@ namespace FreedesktopSecretService.DBusImplementation
             {
                 try
                 {
-
                     await _dbus.SessionConnection.RegisterObjectAsync(this);
-
                 }
                 catch (Exception e)
                 {
@@ -54,8 +52,9 @@ namespace FreedesktopSecretService.DBusImplementation
             });
         }
 
-        
+
         #region Methods
+
         //
         // Methods
         //
@@ -70,6 +69,10 @@ namespace FreedesktopSecretService.DBusImplementation
             // Since we only support plain-text transfer of secret it is enough to know that the specified session exists
             if (true) // TODO Re-enable session based authentication
             {
+#if DEBUG
+                Console.WriteLine(" Retrieved secret from item attempted");
+#endif
+
                 return new Secret(session, Secret);
             }
 
@@ -78,17 +81,19 @@ namespace FreedesktopSecretService.DBusImplementation
 
         public Task SetSecretAsync(Secret secret)
         {
+            Console.WriteLine("Set secret of item attempted");
             throw new System.NotImplementedException();
         }
-        
+
         #endregion
-        
-        
+
+
         #region Signals
+
         //
         // Signals
         //
-        
+
         private readonly HashSet<Action<PropertyChanges>> _changeWatchers = new HashSet<Action<PropertyChanges>>();
 
         private class ChangeDisposable : IDisposable
@@ -114,11 +119,12 @@ namespace FreedesktopSecretService.DBusImplementation
             _changeWatchers.Add(handler);
             return new ChangeDisposable(handler, this);
         }
-        
+
         #endregion
-        
-        
+
+
         #region Properties
+
         //
         // Properties
         //
@@ -137,7 +143,7 @@ namespace FreedesktopSecretService.DBusImplementation
                     return Props.Locked;
                 case nameof(ItemProperties.Modified):
                     return Props.Modified;
-                
+
                 default:
                     throw new ArgumentException();
             }
@@ -153,7 +159,7 @@ namespace FreedesktopSecretService.DBusImplementation
             Console.WriteLine("Set");
             throw new NotImplementedException();
         }
-        
+
         #endregion
     }
 }

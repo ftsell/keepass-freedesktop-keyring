@@ -29,7 +29,7 @@ namespace FreedesktopSecretService.KeepassIntegration
                           attr => entry.PwEntry.CustomData.Contains(
                               new KeyValuePair<string, string>(_plugin.DATA_PREFIX + attr.Key, attr.Value))) ||
                       entry.PwEntry.Strings.Exists("Title") &&
-                      entry.PwEntry.Strings.Get("Title").ReadString() == "UHH-Mail"
+                      entry.PwEntry.Strings.Get("Title").ReadString() == "Nextcloud - ftsell"
                 select entry.ObjectPath
             ).ToArray();
 

@@ -48,11 +48,13 @@ namespace FreedesktopSecretService.DBusImplementation
 
         public Task<ObjectPath> DeleteAsync()
         {
+            Console.WriteLine("Collection deletion attempted");
             throw new NotImplementedException();
         }
 
         public Task<ObjectPath[]> SearchItemsAsync(IDictionary<string, string> attributes)
         {
+            Console.WriteLine("Collection searching attempted");
             throw new NotImplementedException();
         }
 
@@ -60,7 +62,7 @@ namespace FreedesktopSecretService.DBusImplementation
             Secret secret, bool replace)
         {
 
-            Prompt prompt = new ItemCreationPrompt();
+            Prompt prompt = new ItemCreationPrompt(properties, secret, replace);
             
 #if DEBUG
             var acc = "ItemCreation prompt created for item with props: ";
