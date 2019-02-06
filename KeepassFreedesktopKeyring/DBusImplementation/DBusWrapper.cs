@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusImplementation
+namespace KeepassFreedesktopKeyring.DBusImplementation
 {
     public class DBusWrapper
     {
@@ -12,9 +12,9 @@ namespace FreedesktopSecretService.DBusImplementation
 
         internal Connection SessionConnection;
         internal KeepassIntegration.SecretService Service;
-        private readonly FreedesktopSecretServiceExt _plugin;
+        private readonly KeepassFreedesktopKeyringExt _plugin;
 
-        public DBusWrapper(FreedesktopSecretServiceExt plugin)
+        public DBusWrapper(KeepassFreedesktopKeyringExt plugin)
         {
             _plugin = plugin;
             

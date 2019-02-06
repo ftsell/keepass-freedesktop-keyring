@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
-using FreedesktopSecretService.DBusInterfaces;
+using KeepassFreedesktopKeyring.DBusInterfaces;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusImplementation
+namespace KeepassFreedesktopKeyring.DBusImplementation
 {
     public class Session : ISession
     {

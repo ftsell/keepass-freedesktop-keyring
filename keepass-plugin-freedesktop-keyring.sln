@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "keepass-freedesktop-keyring", "keepass-freedesktop-keyring\keepass-freedesktop-keyring.csproj", "{33B531B1-AEBF-42AD-A125-6C2BCFA4AA7B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeepassFreedesktopKeyring", "KeepassFreedesktopKeyring\KeepassFreedesktopKeyring.csproj", "{33B531B1-AEBF-42AD-A125-6C2BCFA4AA7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

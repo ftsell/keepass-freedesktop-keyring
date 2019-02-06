@@ -1,19 +1,16 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using FreedesktopSecretService.Utils;
+using KeepassFreedesktopKeyring.Utils;
 using KeePassLib;
 using Tmds.DBus;
 
-
-namespace FreedesktopSecretService.KeepassIntegration
+namespace KeepassFreedesktopKeyring.KeepassIntegration
 {
     public class Collection : DBusImplementation.Collection
     {
         internal readonly PwDatabase Db;
 
-        private readonly FreedesktopSecretServiceExt _plugin;
+        private readonly KeepassFreedesktopKeyringExt _plugin;
 
         internal readonly IList<Item> PwEntries = new List<Item>();
 
@@ -27,7 +24,7 @@ namespace FreedesktopSecretService.KeepassIntegration
         protected override int Modified { get; } = 0;
 
 
-        public Collection(PwDatabase db, FreedesktopSecretServiceExt plugin) : base(plugin.Dbus, db.Name.MD5Hash())
+        public Collection(PwDatabase db, KeepassFreedesktopKeyringExt plugin) : base(plugin.Dbus, db.Name.MD5Hash())
         {
             Db = db;
             _plugin = plugin;

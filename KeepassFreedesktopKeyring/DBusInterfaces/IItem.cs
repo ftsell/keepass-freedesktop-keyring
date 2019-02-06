@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using KeepassFreedesktopKeyring.DBusImplementation;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusInterfaces
+namespace KeepassFreedesktopKeyring.DBusInterfaces
 {
     /// <summary>
     /// <a href="https://specifications.freedesktop.org/secret-service/re03.html">Freedesktop specification</a>

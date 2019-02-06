@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusInterfaces
+namespace KeepassFreedesktopKeyring.DBusInterfaces
 {
     [DBusInterface("org.freedesktop.Secret.Prompt")]
     public interface IPrompt : IDBusObject

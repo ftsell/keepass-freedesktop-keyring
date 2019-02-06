@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FreedesktopSecretService.DBusImplementation;
-using FreedesktopSecretService.DBusInterfaces;
+using KeepassFreedesktopKeyring.DBusImplementation;
 
-namespace FreedesktopSecretService.KeepassIntegration.PromptTypes
+namespace KeepassFreedesktopKeyring.KeepassIntegration.PromptTypes
 {
     public class ItemCreationPrompt : Prompt
     {

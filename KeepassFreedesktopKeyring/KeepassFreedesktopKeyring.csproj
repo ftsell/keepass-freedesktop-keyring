@@ -7,8 +7,8 @@
     <ProjectGuid>{33B531B1-AEBF-42AD-A125-6C2BCFA4AA7B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FreedesktopSecretService</RootNamespace>
-    <AssemblyName>keepass-freedesktop-keyring</AssemblyName>
+    <RootNamespace>KeepassFreedesktopKeyring</RootNamespace>
+    <AssemblyName>KeepassFreedesktopKeyring</AssemblyName>
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,10 +39,6 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Security.Principal.Windows, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-      <HintPath>..\packages\System.Security.Principal.Windows.4.6.0-preview.19073.11\lib\net461\System.Security.Principal.Windows.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Tmds.DBus, Version=0.7.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Tmds.DBus.0.7.0\lib\netstandard2.0\Tmds.DBus.dll</HintPath>
@@ -56,7 +52,7 @@
     <Compile Include="DBusInterfaces\IPrompt.cs" />
     <Compile Include="DBusInterfaces\IService.cs" />
     <Compile Include="DBusInterfaces\ISession.cs" />
-    <Compile Include="FreedesktopSecretServiceExt.cs" />
+    <Compile Include="KeepassFreedesktopKeyringExt.cs" />
     <Compile Include="DBusImplementation\Collection.cs" />
     <Compile Include="DBusImplementation\Item.cs" />
     <Compile Include="DBusImplementation\Prompt.cs" />

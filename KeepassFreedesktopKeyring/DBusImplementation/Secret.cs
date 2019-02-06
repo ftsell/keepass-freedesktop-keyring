@@ -1,7 +1,7 @@
 using System.Text;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusInterfaces
+namespace KeepassFreedesktopKeyring.DBusImplementation
 {
     
     public struct Secret

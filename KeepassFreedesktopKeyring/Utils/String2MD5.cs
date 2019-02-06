@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace FreedesktopSecretService.Utils
+namespace KeepassFreedesktopKeyring.Utils
 {
     public static class String2Md5
     {

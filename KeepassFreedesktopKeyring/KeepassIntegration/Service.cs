@@ -2,15 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FreedesktopSecretService.DBusInterfaces;
+using KeepassFreedesktopKeyring.DBusImplementation;
 using KeePass.Forms;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.KeepassIntegration
+namespace KeepassFreedesktopKeyring.KeepassIntegration
 {
     public class SecretService : DBusImplementation.SecretService
     {
-        private readonly FreedesktopSecretServiceExt _plugin;
+        private readonly KeepassFreedesktopKeyringExt _plugin;
 
         private readonly IList<Collection> _collections = new List<Collection>();
 
@@ -63,7 +63,7 @@ namespace FreedesktopSecretService.KeepassIntegration
             return result;
         }
 
-        public SecretService(FreedesktopSecretServiceExt plugin) : base(plugin.Dbus)
+        public SecretService(KeepassFreedesktopKeyringExt plugin) : base(plugin.Dbus)
         {
             _plugin = plugin;
 

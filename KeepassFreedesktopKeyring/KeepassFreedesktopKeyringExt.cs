@@ -1,10 +1,9 @@
-﻿using FreedesktopSecretService.DBusImplementation;
-using FreedesktopSecretService.DBusInterfaces;
+﻿using KeepassFreedesktopKeyring.DBusImplementation;
 using KeePass.Plugins;
 
-namespace FreedesktopSecretService
+namespace KeepassFreedesktopKeyring
 {
-    public sealed class FreedesktopSecretServiceExt : Plugin
+    public sealed class KeepassFreedesktopKeyringExt : Plugin
     {
         internal IPluginHost Host;
         internal DBusWrapper Dbus;

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FreedesktopSecretService.DBusInterfaces;
+using KeepassFreedesktopKeyring.DBusInterfaces;
 using Tmds.DBus;
-using System.Security.Cryptography;
-using KeePassLib;
 
-namespace FreedesktopSecretService.DBusImplementation
+namespace KeepassFreedesktopKeyring.DBusImplementation
 {
     public abstract class SecretService : ISecretService
     {

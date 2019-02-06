@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using FreedesktopSecretService.DBusInterfaces;
-using FreedesktopSecretService.KeepassIntegration.PromptTypes;
-using FreedesktopSecretService.Utils;
-using KeePassLib;
+using KeepassFreedesktopKeyring.DBusInterfaces;
+using KeepassFreedesktopKeyring.KeepassIntegration.PromptTypes;
 using Tmds.DBus;
 
-namespace FreedesktopSecretService.DBusImplementation
+namespace KeepassFreedesktopKeyring.DBusImplementation
 {
     public abstract class Collection : ICollection
     {
